@@ -1,5 +1,6 @@
 import { Component } from 'preact';
 import Icon from '../controls/Icon';
+import FilesList from './FilesList';
 import styled from 'styled-components';
 
 const Container = styled.div`
@@ -50,18 +51,6 @@ const HeaderTitle = styled.div`
 	user-select: none;
 `;
 
-const HeaderBack = styled(HeaderButton)`
-	font-size: 18px;
-`;
-
-const HeaderClose = styled(HeaderButton)`
-	font-size: 18px;
-`;
-
-const FileList = styled.div`
-	width: 100%;
-`;
-
 export default class FilesExplorerContainer extends Component {
 	constructor() {
 		super();
@@ -75,11 +64,7 @@ export default class FilesExplorerContainer extends Component {
 				<HeaderTitle>Выберите файл</HeaderTitle>
 				<HeaderButton title="Закрыть"><Icon i="close" /></HeaderButton>
 			</Header>
-			<FileList>
-				LIST
-				LIST
-				LIST
-			</FileList>
+			<FilesList />
 		</Container>;
 	}
 }
