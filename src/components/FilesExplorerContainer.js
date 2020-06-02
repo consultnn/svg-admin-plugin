@@ -54,17 +54,35 @@ const HeaderTitle = styled.div`
 export default class FilesExplorerContainer extends Component {
 	constructor() {
 		super();
+
+		this.state = {
+			list: {
+				directories: [],
+				files: []
+			},
+			root: ''
+		}
 	}
 
-	render(props) {
+	async componentDidMount() {
+		const rootPath = await fetch('//localhost:3001/fs/root').then(response => response.text());
+
+		alert(rootPath);
+	}
+
+	loadFilesList() {
+
+	}
+
+	render(props, state) {
 		return <Container>
 			<Header>
 				<HeaderButton title="Вернуться назад"><Icon i="back" /></HeaderButton>
 				<HeaderButton title="Обновить список"><Icon i="refresh" /></HeaderButton>
 				<HeaderTitle>Выберите файл</HeaderTitle>
-				<HeaderButton title="Закрыть"><Icon i="close" /></HeaderButton>
+				<HeaderButton title="Закрыть" onClick={props.onCloseClick}><Icon i="close" /></HeaderButton>
 			</Header>
-			<FilesList />
+			<FilesList list={state.list} />
 		</Container>;
 	}
 }

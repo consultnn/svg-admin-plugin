@@ -35,7 +35,7 @@ export default class SelectButton extends Component {
 	}
 
 	render(props) {
-		return <SelectButtonElement>
+		return <SelectButtonElement onClick={props.onClick}>
 			<SelectButtonIcon><Icon i="svg" right="10" /></SelectButtonIcon>
 			Выбрать планировку
 		</SelectButtonElement>;

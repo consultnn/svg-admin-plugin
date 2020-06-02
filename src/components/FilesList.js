@@ -18,6 +18,7 @@ const File = styled.button`
 	align-items: center;
 	background-color: transparent;
 	border: none;
+	user-select: none;
 
 	&:nth-child(even) {
 		background-color: #fafafa;
@@ -40,16 +41,14 @@ const FileName = styled.div`
 
 export default class FilesList extends Component {
 	render(props) {
-		console.log(filesList);
-
-		const directories = filesList.directories.map(directory => {
+		const directories = props.list.directories.map(directory => {
 			return <File>
 				<FileIcon><Icon i="folder" /></FileIcon>
 				<FileName>{directory.name}</FileName>
 			</File>
 		});
 
-		const files = filesList.files.map(file => {
+		const files = props.list.files.map(file => {
 			return <File>
 				<FileIcon><Icon i="file" /></FileIcon>
 				<FileName>{file.name}</FileName>

@@ -11,11 +11,27 @@ const Container = styled.div`
 `;
 
 export default class SVGAdmin extends Component {
-	render() {
+	constructor() {
+		super();
+
+		this.toggleExplorerEnabled = this.toggleExplorerEnabled.bind(this);
+
+		this.state = {
+			isExplorerEnabled: false
+		}
+	}
+
+	toggleExplorerEnabled(state) {
+		this.setState({
+			isExplorerEnabled: state
+		})
+	}
+
+	render(props, state) {
 		return (
 			<Container>
-				<SelectButton />
-				<FilesExplorerContainer />
+				<SelectButton onClick={this.toggleExplorerEnabled.bind(this, true)} />
+				{ state.isExplorerEnabled ? <FilesExplorerContainer onCloseClick={this.toggleExplorerEnabled.bind(this, false)} /> : null }
 			</Container>
 		);
 	}
