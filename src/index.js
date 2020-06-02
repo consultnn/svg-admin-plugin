@@ -1,4 +1,3 @@
-import './style';
-import App from './components/app';
+import SVGAdmin from './components/SVGAdmin';
 
-export default App;
+export default SVGAdmin;
