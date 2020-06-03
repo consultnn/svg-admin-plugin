@@ -1,5 +1,5 @@
-import { Component } from 'preact';
-import Icon from '../controls/Icon';
+import React, { Component } from 'react';
+import Icon from './Icon';
 import styled from 'styled-components';
 
 const SelectButtonElement = styled.button`
@@ -15,29 +15,22 @@ const SelectButtonElement = styled.button`
 	font-size: 16px;
 	cursor: pointer;
 	transition: background-color 0.15s ease;
-
 	&:focus {
 		outline: none;
 	}
-
 	&:hover {
 		background-color: #e1e1e1;
 	}
 `;
 
-const SelectButtonIcon = styled.span`
-	margin-right: 10px;
-`;
-
 export default class SelectButton extends Component {
-	constructor() {
-		super();
+	constructor(props) {
+		super(props);
 	}
 
 	render(props) {
-		return <SelectButtonElement onClick={props.onClick}>
-			<SelectButtonIcon><Icon i="svg" right="10" /></SelectButtonIcon>
-			Выбрать планировку
-		</SelectButtonElement>;
+		return <SelectButtonElement>
+			<Icon right={10} i="svg" /> Выбрать планировку
+		</SelectButtonElement>
 	}
 }
