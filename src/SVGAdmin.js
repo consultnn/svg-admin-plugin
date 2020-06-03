@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import SelectButton from './components/SelectButton';
 import FileListControl from './components/FileListControl';
 import styled from 'styled-components';
@@ -9,13 +9,26 @@ const Container = styled.div`
 	font-family: PT Sans, sans-serif;
 `;
 
-function SVGAdmin() {
-  return (
-      <Container>
-          <SelectButton />
-          <FileListControl />
-      </Container>
-  );
-}
+export default class SVGAdmin extends Component {
+    constructor(props) {
+        super(props);
 
-export default SVGAdmin;
+        this.state = {
+            isFilesListEnabled: false,
+            selectedUrl: null
+        }
+    }
+
+    setFileListEnabledState(state) {
+        this.setState({
+            isFilesListEnabled: state
+        });
+    }
+
+    render() {
+        return <Container>
+            <SelectButton onClick={this.setFileListEnabledState.bind(this, true)} selected={this.state.selectedUrl} />
+            { this.state.isFilesListEnabled ? <FileListControl onClose={this.setFileListEnabledState.bind(this, false)} /> : null}
+        </Container>
+    }
+}

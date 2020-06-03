@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import Icon from './Icon';
+import Loading from './Loading';
+import Preview from './Preview';
 import styled from 'styled-components';
 
 const Container = styled.div`
@@ -51,6 +53,8 @@ const HeaderTitle = styled.div`
 	flex: 1;
 	user-select: none;
 	text-align: center;
+	white-space: nowrap;
+	overflow-x: hidden;
 `;
 
 const SecondaryTitle = styled.span`
@@ -87,30 +91,24 @@ const EmptyFolderMessage = styled.div`
 	padding: 100px 50px;
 `;
 
-const LoadingMessage = styled.div`
-	font-size: 13px;
-	color: #212121;
-	text-align: center;
-	padding: 100px 50px;
-
-	svg {
-		display: block;
-		margin: 0 auto 15px auto;
-	}
-`;
-
 export default class FileListControl extends Component {
 	constructor() {
 		super();
 
 		this.onBackClick = this.onBackClick.bind(this);
+		this.onShowPlanClick = this.onShowPlanClick.bind(this);
+		this.onRefreshClick = this.onRefreshClick.bind(this);
+
+		this.titleRef = React.createRef();
 
 		this.state = {
 			currentPath: null,
 			rootPath: null,
 			files: [],
+			flats: [],
 			isLoading: false,
-			target: null,
+			isPreviewEnabled: false,
+			currentFile: null,
 			currentFolder: {},
 			childrenFolders: []
 		}
@@ -125,6 +123,12 @@ export default class FileListControl extends Component {
 		});
 
 		this._getList(rootPath)
+	}
+
+	componentDidUpdate() {
+		if (this.titleRef.current) {
+			this.titleRef.current.scrollTo({ left: 999999, behavior: "smooth" });
+		}
 	}
 
 	async _getList(path) {
@@ -142,7 +146,7 @@ export default class FileListControl extends Component {
 					currentFolder: result.currentDirectory,
 					currentPath: path
 				})
-			})
+			});
 	}
 
 	onFolderClick(newPath) {
@@ -153,31 +157,105 @@ export default class FileListControl extends Component {
 		this._getList(newPath);
 	}
 
+	async onFileClick(path) {
+		this.setState({
+			isLoading: true
+		});
+
+		await fetch('/fs/flats?path=' + path)
+			.then(response => response.json())
+			.then(result => {
+				this.setState({
+					isLoading: false,
+					flats: result,
+					currentFile: path
+				})
+			});
+	}
+
 	onBackClick() {
-		this._getList(this.state.currentFolder.parent);
+		if (!this.state.currentFile) {
+			this._getList(this.state.currentFolder.parent);
+			return;
+		}
+
+		if (this.state.isPreviewEnabled) {
+			this.setState({
+				isPreviewEnabled: false
+			})
+
+			return;
+		}
+
+		this.setState({
+			currentFile: null,
+			flats: []
+		});
+
+		this._getList(this.state.currentFolder.path);
+	}
+
+	onRefreshClick() {
+		if (!this.state.currentFile) {
+			this._getList(this.state.currentFolder.path);
+		}
+	}
+
+	onShowPlanClick() {
+		this.setState({
+			isPreviewEnabled: true
+		});
 	}
 
 	render() {
-		const folders = this.state.childrenFolders.map((folder, folderIndex) => {
-			return <File key={folderIndex} title={folder.name} onClick={this.onFolderClick.bind(this, folder.path)}><Icon i="folder" right={10} /> {folder.name}</File>;
-		});
+		let content = null;
 
-		const files = this.state.files.map((file, fileIndex) => {
-			return <File key={fileIndex} title={file.name}><Icon i="file" right={10} /> {file.name}</File>;
-		});
+		console.clear();
+		console.log(this.state.currentFile, this.state.isPreviewEnabled)
 
-		let emptyMessage = null;
-		if (!folders.length && !files.length && !this.state.isLoading) {
-			emptyMessage = <EmptyFolderMessage>Нет файлов</EmptyFolderMessage>
-		}
-
-		let loadingMessage = null;
 		if (this.state.isLoading) {
-			loadingMessage = <LoadingMessage>
-				<svg width="64px" height="64px" viewBox="0 0 128 128"><g><path d="M64 0L40.08 21.9a10.98 10.98 0 0 0-5.05 8.75C34.37 44.85 64 60.63 64 60.63V0z" fill="#ffb118"/><path d="M128 64l-21.88-23.9a10.97 10.97 0 0 0-8.75-5.05C83.17 34.4 67.4 64 67.4 64H128z" fill="#80c141"/><path d="M63.7 69.73a110.97 110.97 0 0 1-5.04-20.54c-1.16-8.7.68-14.17.68-14.17h38.03s-4.3-.86-14.47 10.1c-3.06 3.3-19.2 24.58-19.2 24.58z" fill="#cadc28"/><path d="M64 128l23.9-21.88a10.97 10.97 0 0 0 5.05-8.75C93.6 83.17 64 67.4 64 67.4V128z" fill="#cf171f"/><path d="M58.27 63.7a110.97 110.97 0 0 1 20.54-5.04c8.7-1.16 14.17.68 14.17.68v38.03s.86-4.3-10.1-14.47c-3.3-3.06-24.58-19.2-24.58-19.2z" fill="#ec1b21"/><path d="M0 64l21.88 23.9a10.97 10.97 0 0 0 8.75 5.05C44.83 93.6 60.6 64 60.6 64H0z" fill="#018ed5"/><path d="M64.3 58.27a110.97 110.97 0 0 1 5.04 20.54c1.16 8.7-.68 14.17-.68 14.17H30.63s4.3.86 14.47-10.1c3.06-3.3 19.2-24.58 19.2-24.58z" fill="#00bbf2"/><path d="M69.73 64.34a111.02 111.02 0 0 1-20.55 5.05c-8.7 1.14-14.15-.7-14.15-.7V30.65s-.86 4.3 10.1 14.5c3.3 3.05 24.6 19.2 24.6 19.2z" fill="#f8f400"/><circle cx="64" cy="64" r="2.03"/><animateTransform attributeName="transform" type="rotate" from="0 64 64" to="-360 64 64" dur="2700ms" repeatCount="indefinite"></animateTransform></g></svg>
+			content = <Loading />;
+		} else if (this.state.currentFile && !this.state.isPreviewEnabled) {
+			const allFloor = <File title="Выбрать весь этаж"><Icon i="floor" right={10} /> Выбрать весь этаж</File>;
 
-				Получение данных...
-			</LoadingMessage>;
+			if (this.state.flats.length) {
+				const selectInPreview = <File title="Выбрать на плане" onClick={this.onShowPlanClick}><Icon i="maximize" right={10} /> Выбрать на плане</File>;
+
+				content = <React.Fragment>
+					{ allFloor }
+					{ selectInPreview }
+					{ this.state.flats.map((flat, flatIndex) => {
+						return <File key={flatIndex} title={flat.name}><Icon i="flat" right={10} /> {flat.name}</File>
+					})}
+				</React.Fragment>
+			} else {
+				content = <React.Fragment>
+					{ allFloor }
+					<EmptyFolderMessage>Нет квартир</EmptyFolderMessage>
+				</React.Fragment>
+			}
+		} else if (this.state.currentFile && this.state.isPreviewEnabled) {
+			console.log('in if');
+			content = <Preview path={this.state.currentFile} />
+		} else {
+			const folders = this.state.childrenFolders.map((folder, folderIndex) => {
+				return <File key={folderIndex} title={folder.name} onClick={this.onFolderClick.bind(this, folder.path)}><Icon i="folder" right={10} /> {folder.name}</File>;
+			});
+
+			const files = this.state.files.map((file, fileIndex) => {
+				return <File key={fileIndex} title={file.name} onClick={this.onFileClick.bind(this, file.path)}><Icon i="file" right={10} /> {file.name}</File>;
+			});
+
+			let emptyMessage = null;
+			if (!folders.length && !files.length && !this.state.isLoading) {
+				emptyMessage = <EmptyFolderMessage>Нет файлов</EmptyFolderMessage>
+			}
+
+			content = <React.Fragment>
+				{folders}
+				{files}
+				{emptyMessage}
+			</React.Fragment>
 		}
 
 		let title = 'Выберите файл';
@@ -187,20 +265,24 @@ export default class FileListControl extends Component {
 
 			const pathWithoutRoot = this.state.currentFolder.path.replace(this.state.rootPath, '');
 			if (pathWithoutRoot.length) {
-				console.log(pathWithoutRoot);
 				secondaryTitle = <SecondaryTitle>..{pathWithoutRoot.split('/').slice(0, -1).join('/')}/</SecondaryTitle>;
 			}
 		}
 
+		if (this.state.currentFile) {
+			title = this.state.currentFile.split('/').slice(-1);
+			secondaryTitle = null;
+		}
+
 		return <Container>
 			<Header>
-				<HeaderButton title="Вернуться назад" onClick={this.onBackClick} disabled={this.state.currentFolder.path === this.state.rootPath}><Icon i="back" /></HeaderButton>
-				<HeaderButton title="Обновить список" disabled={true}><Icon i="refresh" /></HeaderButton>
-				<HeaderTitle>{secondaryTitle}{ title }</HeaderTitle>
-				<HeaderButton title="Закрыть"><Icon i="close" /></HeaderButton>
+				<HeaderButton title="Вернуться назад" onClick={this.onBackClick} disabled={this.state.currentFolder.path === this.state.rootPath && !this.state.currentFile}><Icon i="back" /></HeaderButton>
+				<HeaderButton title="Обновить список" onClick={this.onRefreshClick} disabled={this.state.isPreviewEnabled}><Icon i="refresh" /></HeaderButton>
+				<HeaderTitle ref={this.titleRef}>{secondaryTitle}{ title }</HeaderTitle>
+				<HeaderButton title="Закрыть" onClick={this.props.onClose}><Icon i="close" /></HeaderButton>
 			</Header>
 			<FilesList>
-				{ this.state.isLoading ? loadingMessage : [folders, files, emptyMessage]}
+				{ content }
 			</FilesList>
 		</Container>;
 	}
