@@ -15,7 +15,8 @@ export default class SVGAdmin extends Component {
 
         this.state = {
             isFilesListEnabled: false,
-            selectedUrl: null
+            selectedUrl: null,
+            apiURL: null,
         }
     }
 
