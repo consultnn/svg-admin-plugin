@@ -23,14 +23,39 @@ const SelectButtonElement = styled.button`
 	}
 `;
 
+const FileUrlFileName = styled.span`
+	color: #212121;
+	font-weight: 700;
+	font-size: 14px;
+`;
+
+const FileUrlFlatName = styled.span`
+	color: gray;
+	font-weight: 500;
+	font-size: 14px;
+	margin-left: 10px;
+`;
+
 export default class SelectButton extends Component {
 	constructor(props) {
 		super(props);
 	}
 
-	render(props) {
+	render() {
+		let buttonContent = <React.Fragment><Icon right={10} i="svg" /> Выбрать планировку</React.Fragment>;
+		if (this.props.selected) {
+			const fileUrlArray = this.props.selected.split('#');
+			const fileName = [<FileUrlFileName>{fileUrlArray[0]}</FileUrlFileName>];
+
+			if (fileUrlArray.length) {
+				fileName.push(<FileUrlFlatName>{fileUrlArray[1]}</FileUrlFlatName>)
+			}
+
+			buttonContent = <React.Fragment><Icon right={10} i="flat" /> {fileName}</React.Fragment>;
+		}
+
 		return <SelectButtonElement onClick={this.props.onClick}>
-			<Icon right={10} i="svg" /> Выбрать планировку
+			{ buttonContent }
 		</SelectButtonElement>
 	}
 }

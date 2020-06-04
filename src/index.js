@@ -6,7 +6,7 @@ import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(
   <React.StrictMode>
-    <SVGAdmin />
+    <SVGAdmin inputSelector={document.getElementById('svg-admin-list').dataset.inputSelector} />
   </React.StrictMode>,
   document.getElementById('svg-admin-list')
 );

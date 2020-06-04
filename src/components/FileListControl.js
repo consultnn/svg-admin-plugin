@@ -31,9 +31,6 @@ const HeaderButton = styled.button`
 	&:hover {
 		opacity: 1;
 	}
-	img {
-		height: 18px;
-	}
 
 	&:disabled {
 		cursor: default;
@@ -67,6 +64,8 @@ const File = styled.button`
 	align-items: center;
 	background-color: transparent;
 	border: none;
+	transition: background-color 0.15s ease;
+
 	&:nth-child(even) {
 		background-color: #fafafa;
 	}
@@ -207,25 +206,32 @@ export default class FileListControl extends Component {
 		});
 	}
 
+	onAllFloorClick() {
+		this.props.changeUrl(this.state.currentFile.replace(this.state.rootPath, ''));
+		this.props.onClose();
+	}
+
+	onFlatClick(flatName) {
+		this.props.changeUrl(this.state.currentFile.replace(this.state.rootPath, '') + '#' + flatName);
+		this.props.onClose();
+	}
+
 	render() {
 		let content = null;
-
-		console.clear();
-		console.log(this.state.currentFile, this.state.isPreviewEnabled)
 
 		if (this.state.isLoading) {
 			content = <Loading />;
 		} else if (this.state.currentFile && !this.state.isPreviewEnabled) {
-			const allFloor = <File title="Выбрать весь этаж"><Icon i="floor" right={10} /> Выбрать весь этаж</File>;
+			const allFloor = <File title="Выбрать весь этаж" onClick={this.onAllFloorClick.bind(this)}><Icon i="floor" right={10} /> Выбрать весь этаж</File>;
 
 			if (this.state.flats.length) {
-				const selectInPreview = <File title="Выбрать на плане" onClick={this.onShowPlanClick}><Icon i="maximize" right={10} /> Выбрать на плане</File>;
+				const selectInPreview = <File title="Выбрать на плане" onClick={this.onShowPlanClick}><Icon i="plan" right={10} /> Выбрать на плане</File>;
 
 				content = <React.Fragment>
 					{ allFloor }
 					{ selectInPreview }
 					{ this.state.flats.map((flat, flatIndex) => {
-						return <File key={flatIndex} title={flat.name}><Icon i="flat" right={10} /> {flat.name}</File>
+						return <File key={flatIndex} title={flat.name} onClick={this.onFlatClick.bind(this, flat.name)}><Icon i="flat" right={10} /> {flat.name}</File>
 					})}
 				</React.Fragment>
 			} else {
@@ -235,8 +241,7 @@ export default class FileListControl extends Component {
 				</React.Fragment>
 			}
 		} else if (this.state.currentFile && this.state.isPreviewEnabled) {
-			console.log('in if');
-			content = <Preview path={this.state.currentFile} />
+			content = <Preview path={this.state.currentFile} onPreviewClick={this.onFlatClick.bind(this)} />
 		} else {
 			const folders = this.state.childrenFolders.map((folder, folderIndex) => {
 				return <File key={folderIndex} title={folder.name} onClick={this.onFolderClick.bind(this, folder.path)}><Icon i="folder" right={10} /> {folder.name}</File>;
@@ -276,7 +281,7 @@ export default class FileListControl extends Component {
 
 		return <Container>
 			<Header>
-				<HeaderButton title="Вернуться назад" onClick={this.onBackClick} disabled={this.state.currentFolder.path === this.state.rootPath && !this.state.currentFile}><Icon i="back" /></HeaderButton>
+				<HeaderButton title="Вернуться назад" onClick={this.onBackClick} disabled={this.state.currentFolder.path === this.state.rootPath && !this.state.currentFile}><Icon i="back" top={4} /></HeaderButton>
 				<HeaderButton title="Обновить список" onClick={this.onRefreshClick} disabled={this.state.isPreviewEnabled}><Icon i="refresh" /></HeaderButton>
 				<HeaderTitle ref={this.titleRef}>{secondaryTitle}{ title }</HeaderTitle>
 				<HeaderButton title="Закрыть" onClick={this.props.onClose}><Icon i="close" /></HeaderButton>

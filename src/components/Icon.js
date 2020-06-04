@@ -21,6 +21,10 @@ export default class Icon extends Component {
 			styles.marginRight = this.props.right;
 		}
 
+		if (this.props.top) {
+			styles.marginTop = this.props.top;
+		}
+
 		if (this.props.style) {
 			styles = Object.assign(styles, this.props.style);
 		}

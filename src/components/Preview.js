@@ -18,7 +18,7 @@ const PreviewContainer = styled.div`
 		}
 
 		> g:not([data-element-type]) {
-			pointer-events: auto;
+			pointer-events: visible;
 			transition: opacity 0.3s ease;
 
 			&:hover {
@@ -32,6 +32,7 @@ export default class Preview extends Component {
 	constructor(props) {
 		super(props);
 
+		this.onPreviewClick = this.onPreviewClick.bind(this);
 		this.containerRef = React.createRef();
 
 		this.state = {
@@ -59,6 +60,14 @@ export default class Preview extends Component {
 			});
 	}
 
+	onPreviewClick(e) {
+		const groupName = e.target.closest('svg > g');
+
+		if (groupName && groupName.id) {
+			this.props.onPreviewClick(groupName.id);
+		}
+	}
+
 	render() {
 		if (this.state.isLoading) {
 			return <Loading />;
@@ -70,6 +79,6 @@ export default class Preview extends Component {
 			};
 		};
 
-		return <PreviewContainer ref={this.containerRef} dangerouslySetInnerHTML={createMarkup()}></PreviewContainer>;
+		return <PreviewContainer ref={this.containerRef} dangerouslySetInnerHTML={createMarkup()} onClick={this.onPreviewClick}></PreviewContainer>;
 	}
 }
