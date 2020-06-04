@@ -12,8 +12,6 @@ gulp.task('copy-media', function() {
 });
 
 gulp.task('build', function () {
-	gulp.start('copy-media');
-
 	return browserify('./src/')
 		.transform(babelify)
 		.bundle()
