@@ -1,8 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import SVGAdmin from './SVGAdmin';
-//import * as serviceWorker from './serviceWorker';
+import SVGAdmin from './components/SVGAdmin';
 
 ReactDOM.render(
   <React.StrictMode>
@@ -10,5 +8,3 @@ ReactDOM.render(
   </React.StrictMode>,
   document.getElementById('svg-admin-list')
 );
-
-//serviceWorker.unregister();

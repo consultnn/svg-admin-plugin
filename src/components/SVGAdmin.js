@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import SelectButton from './components/SelectButton';
-import FileListControl from './components/FileListControl';
+import SelectButton from './SelectButton';
+import FileListControl from './FileListControl';
 import styled from 'styled-components';
 
 const Container = styled.div`
