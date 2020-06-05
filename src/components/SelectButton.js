@@ -54,7 +54,7 @@ export default class SelectButton extends Component {
 			buttonContent = <React.Fragment><Icon right={10} i="flat" /> {fileName}</React.Fragment>;
 		}
 
-		return <SelectButtonElement onClick={this.props.onClick}>
+		return <SelectButtonElement onClick={this.props.onClick} type="button">
 			{ buttonContent }
 		</SelectButtonElement>
 	}
