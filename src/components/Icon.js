@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 export default class Icon extends Component {
 	render() {
-		let url = '/media/' + this.props.i + '.svg';
+		let url = '/assets/svg-media/' + this.props.i + '.svg';
 		let styles = {};
 
 		if (this.props.w) {
