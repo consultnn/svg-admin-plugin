@@ -8,7 +8,7 @@ var uglify = require('gulp-uglify');
 
 gulp.task('copy-media', function() {
 	return gulp.src('./public/media/*')
-		.pipe(gulp.dest('dist/media'));
+		.pipe(gulp.dest('dist/assets/svg-media'));
 });
 
 gulp.task('build', function () {

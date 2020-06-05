@@ -5,22 +5,16 @@ import styled from 'styled-components';
 const SelectButtonElement = styled.button`
 	display: flex;
 	width: 100%;
-	align-items: center;
-	background-color: #fafafa;
-	border: none;
-	padding: 10px 20px;
-	text-align: center;
 	border-radius: 8px;
-	justify-content: center;
-	font-size: 16px;
-	cursor: pointer;
-	transition: background-color 0.15s ease;
+	overflow: hidden;
+	border: none;
+	padding: 0;
+	align-items: normal;
+
 	&:focus {
-		outline: none;
+		outline: 0;
 	}
-	&:hover {
-		background-color: #e1e1e1;
-	}
+
 `;
 
 const FileUrlFileName = styled.span`
@@ -36,13 +30,53 @@ const FileUrlFlatName = styled.span`
 	margin-left: 10px;
 `;
 
+const FileViewButton = styled.button`
+	margin: -10px -20px;
+	padding: 10px 20px;
+	border: none;
+	background-color: #fafafa;
+	border-left: 1px solid lightgray;
+	cursor: pointer;
+
+	&:focus {
+		outline: none;
+	}
+
+	&:hover {
+		background-color: #e1e1e1;
+	}
+`;
+
+const SelectButtonActiveZone = styled.div`
+	display: flex;
+	flex: 1;
+	align-items: center;
+	justify-content: center;
+	background-color: #fafafa;
+	transition: background-color 0.15s ease;
+	padding: 10px 20px;
+	font-size: 16px;
+	cursor: pointer;
+
+	& + & {
+		border-left: 1px solid lightgray;
+	}
+
+	&:focus {
+		outline: none;
+	}
+	&:hover {
+		background-color: #e1e1e1;
+	}
+`;
+
 export default class SelectButton extends Component {
 	constructor(props) {
 		super(props);
 	}
 
 	render() {
-		let buttonContent = <React.Fragment><Icon right={10} i="svg" /> Выбрать планировку</React.Fragment>;
+		let buttonContent = <SelectButtonActiveZone onClick={this.props.onClick}><Icon w={20} h={20} right={10} i="svg" /> Выбрать планировку</SelectButtonActiveZone>;
 		if (this.props.selected) {
 			const fileUrlArray = this.props.selected.split('#');
 			const fileName = [<FileUrlFileName>{fileUrlArray[0]}</FileUrlFileName>];
@@ -51,10 +85,10 @@ export default class SelectButton extends Component {
 				fileName.push(<FileUrlFlatName>{fileUrlArray[1]}</FileUrlFlatName>)
 			}
 
-			buttonContent = <React.Fragment><Icon right={10} i="flat" /> {fileName}</React.Fragment>;
+			buttonContent = <React.Fragment><SelectButtonActiveZone onClick={this.props.onClick}><Icon right={10} i="flat" /> {fileName}</SelectButtonActiveZone><SelectButtonActiveZone style={{flex: 0}}><Icon i="view" /></SelectButtonActiveZone></React.Fragment>;
 		}
 
-		return <SelectButtonElement onClick={this.props.onClick} type="button">
+		return <SelectButtonElement type="button">
 			{ buttonContent }
 		</SelectButtonElement>
 	}
