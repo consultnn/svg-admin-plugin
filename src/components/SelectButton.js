@@ -81,7 +81,7 @@ export default class SelectButton extends Component {
 	}
 
 	render() {
-		let buttonContent = <SelectButtonActiveZone onClick={this.props.onClick}><Icon w={20} h={20} right={10} i="svg" /> Выбрать планировку</SelectButtonActiveZone>;
+		let buttonContent = <SelectButtonActiveZone type="button" onClick={this.props.onClick}><Icon w={20} h={20} right={10} i="svg" /> Выбрать планировку</SelectButtonActiveZone>;
 		if (this.props.selected) {
 			const fileUrlArray = this.props.selected.split('#');
 			const fileName = [<FileUrlFileName>{fileUrlArray[0]}</FileUrlFileName>];
