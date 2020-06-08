@@ -123,9 +123,8 @@ export default class FileListControl extends Component {
 		});
 
 		if (this.props.currentFile) {
-			this.setState({
-				currentFile: this.props.currentFile
-			})
+			const currentFile = this.props.currentFile;
+			this.onFileClick(rootPath + currentFile);
 		}
 
 		this._getList(rootPath);
@@ -174,7 +173,7 @@ export default class FileListControl extends Component {
 				this.setState({
 					isLoading: false,
 					flats: result,
-					currentFile: path
+					currentFile: path.replace(this.state.rootPath, '')
 				})
 			});
 	}
@@ -286,7 +285,7 @@ export default class FileListControl extends Component {
 		}
 
 		if (this.state.currentFile) {
-			title = this.state.currentFile.split('/').slice(-1);
+			title = this.state.currentFile.split('#')[0].split('/').slice(-1);
 			secondaryTitle = null;
 		}
 
