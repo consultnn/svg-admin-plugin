@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Icon from './Icon';
 import Loading from './Loading';
 import Preview from './Preview';
+import PreviewRender from './PreviewRender';
 import styled from 'styled-components';
 
 const Container = styled.div`
@@ -121,7 +122,13 @@ export default class FileListControl extends Component {
 			rootPath: rootPath
 		});
 
-		this._getList(rootPath)
+		if (this.props.currentFile) {
+			this.setState({
+				currentFile: this.props.currentFile
+			})
+		}
+
+		this._getList(rootPath);
 	}
 
 	componentDidUpdate() {
@@ -219,9 +226,11 @@ export default class FileListControl extends Component {
 	render() {
 		let content = null;
 
+		console.log(this.state.currentFile, this.state.isPreviewEnabled, this.props.isPreviewFileEnabled);
+
 		if (this.state.isLoading) {
 			content = <Loading />;
-		} else if (this.state.currentFile && !this.state.isPreviewEnabled) {
+		} else if (this.state.currentFile && !this.state.isPreviewEnabled && !this.props.isPreviewFileEnabled) {
 			const allFloor = <File type="button" title="Выбрать весь этаж" onClick={this.onAllFloorClick.bind(this)}><Icon i="floor" right={10} /> Выбрать весь этаж</File>;
 
 			if (this.state.flats.length) {
@@ -241,7 +250,9 @@ export default class FileListControl extends Component {
 				</React.Fragment>
 			}
 		} else if (this.state.currentFile && this.state.isPreviewEnabled) {
-			content = <Preview path={this.state.currentFile} onPreviewClick={this.onFlatClick.bind(this)} />
+			content = <Preview path={this.state.currentFile} onPreviewClick={this.onFlatClick.bind(this)}/>
+		} else if (this.state.currentFile && this.props.isPreviewFileEnabled) {
+			content = <PreviewRender path={this.state.currentFile} />
 		} else {
 			const folders = this.state.childrenFolders.map((folder, folderIndex) => {
 				return <File type="button" key={folderIndex} title={folder.name} onClick={this.onFolderClick.bind(this, folder.path)}><Icon i="folder" right={10} /> {folder.name}</File>;
@@ -281,9 +292,9 @@ export default class FileListControl extends Component {
 
 		return <Container>
 			<Header>
-				<HeaderButton title="Вернуться назад" onClick={this.onBackClick} type="button" disabled={this.state.currentFolder.path === this.state.rootPath && !this.state.currentFile}><Icon i="back" top={4} /></HeaderButton>
-				<HeaderButton title="Обновить список" onClick={this.onRefreshClick} type="button" disabled={this.state.isPreviewEnabled}><Icon i="refresh" /></HeaderButton>
-				<HeaderTitle ref={this.titleRef}>{secondaryTitle}{ title }</HeaderTitle>
+				<HeaderButton title="Вернуться назад" onClick={this.onBackClick} type="button" disabled={this.props.isPreviewFileEnabled || (this.state.currentFolder.path === this.state.rootPath && !this.state.currentFile)}><Icon i="back" top={4} /></HeaderButton>
+				<HeaderButton title="Обновить список" onClick={this.onRefreshClick} type="button" disabled={this.props.isPreviewFileEnabled || this.state.isPreviewEnabled}><Icon i="refresh" /></HeaderButton>
+				<HeaderTitle ref={this.titleRef}>{this.props.isPreviewFileEnabled ? "Предпросмотр файла" : [secondaryTitle, title]}</HeaderTitle>
 				<HeaderButton title="Закрыть" onClick={this.props.onClose} type="button"><Icon i="close" /></HeaderButton>
 			</Header>
 			<FilesList>

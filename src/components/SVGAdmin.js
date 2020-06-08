@@ -13,10 +13,14 @@ export default class SVGAdmin extends Component {
     constructor(props) {
         super(props);
 
+        this.onUrlCreated = this.onUrlCreated.bind(this);
+        this.setFilePreviewState = this.setFilePreviewState.bind(this);
+
         this.state = {
             isFilesListEnabled: false,
+            isPreviewFileEnabled: false,
             selectedUrl: null,
-            apiURL: null,
+            apiURL: null
         }
     }
 
@@ -34,7 +38,8 @@ export default class SVGAdmin extends Component {
 
     setFileListEnabledState(state) {
         this.setState({
-            isFilesListEnabled: state
+            isFilesListEnabled: state,
+            isPreviewFileEnabled: false
         });
     }
 
@@ -52,10 +57,17 @@ export default class SVGAdmin extends Component {
         }
     }
 
+    setFilePreviewState() {
+        this.setState({
+            isFilesListEnabled: true,
+            isPreviewFileEnabled: true
+        });
+    }
+
     render() {
         return <Container>
-            <SelectButton onClick={this.setFileListEnabledState.bind(this, true)} selected={this.state.selectedUrl} />
-            { this.state.isFilesListEnabled ? <FileListControl onClose={this.setFileListEnabledState.bind(this, false)} changeUrl={this.onUrlCreated.bind(this)} /> : null}
+            <SelectButton onClick={this.setFileListEnabledState.bind(this, true)} selected={this.state.selectedUrl} changeUrl={this.onUrlCreated} setFilePreviewState={this.setFilePreviewState} />
+            { this.state.isFilesListEnabled ? <FileListControl onClose={this.setFileListEnabledState.bind(this, false)} changeUrl={this.onUrlCreated} onFilePreviewClick={this.setFilePreviewState} isPreviewFileEnabled={this.state.isPreviewFileEnabled} currentFile={this.state.selectedUrl} /> : null}
         </Container>
     }
 }

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Icon from './Icon';
 import styled from 'styled-components';
 
-const SelectButtonElement = styled.button`
+const SelectButtonElement = styled.div`
 	display: flex;
 	width: 100%;
 	border-radius: 8px;
@@ -47,7 +47,7 @@ const FileViewButton = styled.button`
 	}
 `;
 
-const SelectButtonActiveZone = styled.div`
+const SelectButtonActiveZone = styled.button`
 	display: flex;
 	flex: 1;
 	align-items: center;
@@ -57,6 +57,7 @@ const SelectButtonActiveZone = styled.div`
 	padding: 10px 20px;
 	font-size: 16px;
 	cursor: pointer;
+	border: none;
 
 	& + & {
 		border-left: 1px solid lightgray;
@@ -75,6 +76,10 @@ export default class SelectButton extends Component {
 		super(props);
 	}
 
+	onCloseButtonClick() {
+		this.props.changeUrl(null);
+	}
+
 	render() {
 		let buttonContent = <SelectButtonActiveZone onClick={this.props.onClick}><Icon w={20} h={20} right={10} i="svg" /> Выбрать планировку</SelectButtonActiveZone>;
 		if (this.props.selected) {
@@ -85,7 +90,11 @@ export default class SelectButton extends Component {
 				fileName.push(<FileUrlFlatName>{fileUrlArray[1]}</FileUrlFlatName>)
 			}
 
-			buttonContent = <React.Fragment><SelectButtonActiveZone onClick={this.props.onClick}><Icon right={10} i="flat" /> {fileName}</SelectButtonActiveZone><SelectButtonActiveZone style={{flex: 0}}><Icon i="view" /></SelectButtonActiveZone></React.Fragment>;
+			buttonContent = <React.Fragment>
+				<SelectButtonActiveZone onClick={this.props.onClick}><Icon right={10} i="flat" /> {fileName}</SelectButtonActiveZone>
+				<SelectButtonActiveZone title="Предпросмотр" style={{flex: 0}} onClick={this.props.setFilePreviewState}><Icon i="view" /></SelectButtonActiveZone>
+				<SelectButtonActiveZone title="Отменить выбранную планировку" style={{flex: 0}} onClick={this.onCloseButtonClick.bind(this)}><Icon i="close" /></SelectButtonActiveZone>
+			</React.Fragment>;
 		}
 
 		return <SelectButtonElement type="button">
