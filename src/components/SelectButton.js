@@ -91,9 +91,9 @@ export default class SelectButton extends Component {
 			}
 
 			buttonContent = <React.Fragment>
-				<SelectButtonActiveZone onClick={this.props.onClick}><Icon right={10} i="flat" /> {fileName}</SelectButtonActiveZone>
-				<SelectButtonActiveZone title="Предпросмотр" style={{flex: 0}} onClick={this.props.setFilePreviewState}><Icon i="view" /></SelectButtonActiveZone>
-				<SelectButtonActiveZone title="Отменить выбранную планировку" style={{flex: 0}} onClick={this.onCloseButtonClick.bind(this)}><Icon i="close" /></SelectButtonActiveZone>
+				<SelectButtonActiveZone type="button" onClick={this.props.onClick}><Icon right={10} i="flat" /> {fileName}</SelectButtonActiveZone>
+				<SelectButtonActiveZone type="button" title="Предпросмотр" style={{flex: 0}} onClick={this.props.setFilePreviewState}><Icon i="view" /></SelectButtonActiveZone>
+				<SelectButtonActiveZone type="button" title="Отменить выбранную планировку" style={{flex: 0}} onClick={this.onCloseButtonClick.bind(this)}><Icon i="close" /></SelectButtonActiveZone>
 			</React.Fragment>;
 		}
 
