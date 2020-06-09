@@ -39,7 +39,7 @@ export default class PreviewRender extends Component {
 		let flatInfo = this.props.path.split('#');
 		console.log('path:', this.props.path, flatInfo)
 
-		let url = `http://svgcloud.${this._domain}/render?path=${flatInfo[0]}`;
+		let url = `https://svgcloud.${this._domain}/render?path=${flatInfo[0]}`;
 		if (flatInfo.length > 1) {
 			url += "&flat=" + flatInfo[1];
 		}

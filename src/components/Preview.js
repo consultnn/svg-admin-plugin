@@ -51,7 +51,7 @@ export default class Preview extends Component {
 			isLoading: true
 		});
 
-		await fetch(`http://svgcloud.${this._domain}/render?path=${this.props.path}`)
+		await fetch(`https://svgcloud.${this._domain}/render?path=${this.props.path}`)
 			.then(response => response.text())
 			.then(result => {
 				this.setState({

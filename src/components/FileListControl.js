@@ -116,7 +116,7 @@ export default class FileListControl extends Component {
 
 	async componentDidMount() {
 		this._domain = document.getElementById('svg-admin-list').dataset.appDomain || 'ru';
-		const rootPath = await fetch(`http://svgcloud.${this._domain}/fs/root`).then(response => response.text());
+		const rootPath = await fetch(`https://svgcloud.${this._domain}/fs/root`).then(response => response.text());
 
 		this.setState({
 			currentPath: rootPath,
@@ -142,7 +142,7 @@ export default class FileListControl extends Component {
 			isLoading: true
 		});
 
-		const promise = await fetch(`http://svgcloud.${this._domain}/fs/list?path=${path}`)
+		const promise = await fetch(`https://svgcloud.${this._domain}/fs/list?path=${path}`)
 			.then(response => response.json())
 			.then(result => {
 				this.setState({
@@ -168,7 +168,7 @@ export default class FileListControl extends Component {
 			isLoading: true
 		});
 
-		await fetch(`http://svgcloud.${this._domain}/fs/flats?path=${path}`)
+		await fetch(`https://svgcloud.${this._domain}/fs/flats?path=${path}`)
 			.then(response => response.json())
 			.then(result => {
 				this.setState({
