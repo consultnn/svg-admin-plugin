@@ -42,6 +42,7 @@ export default class Preview extends Component {
 	}
 
 	componentDidMount() {
+		this._domain = document.getElementById('svg-admin-list').dataset.appDomain || 'ru';
 		this._getFileContent();
 	}
 
@@ -50,7 +51,7 @@ export default class Preview extends Component {
 			isLoading: true
 		});
 
-		await fetch('http://127.0.0.1:3001/fs/read?path=' + this.props.path)
+		await fetch(`http://svgcloud.${this._domain}/render?path=${this.props.path}`)
 			.then(response => response.text())
 			.then(result => {
 				this.setState({

@@ -115,7 +115,8 @@ export default class FileListControl extends Component {
 	}
 
 	async componentDidMount() {
-		const rootPath = await fetch('http://127.0.0.1:3001/fs/root').then(response => response.text());
+		this._domain = document.getElementById('svg-admin-list').dataset.appDomain || 'ru';
+		const rootPath = await fetch(`http://svgcloud.${this._domain}/fs/root`).then(response => response.text());
 
 		this.setState({
 			currentPath: rootPath,
@@ -141,7 +142,7 @@ export default class FileListControl extends Component {
 			isLoading: true
 		});
 
-		const promise = await fetch('http://127.0.0.1:3001/fs/list?path=' + path)
+		const promise = await fetch(`http://svgcloud.${this._domain}/fs/list?path=${path}`)
 			.then(response => response.json())
 			.then(result => {
 				this.setState({
@@ -167,7 +168,7 @@ export default class FileListControl extends Component {
 			isLoading: true
 		});
 
-		await fetch('http://127.0.0.1:3001/fs/flats?path=' + path)
+		await fetch(`http://svgcloud.${this._domain}/fs/flats?path=${path}`)
 			.then(response => response.json())
 			.then(result => {
 				this.setState({

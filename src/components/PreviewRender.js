@@ -27,6 +27,7 @@ export default class PreviewRender extends Component {
 	}
 
 	componentDidMount() {
+		this._domain = document.getElementById('svg-admin-list').dataset.appDomain || 'ru';
 		this._getFileContent();
 	}
 
@@ -38,12 +39,10 @@ export default class PreviewRender extends Component {
 		let flatInfo = this.props.path.split('#');
 		console.log('path:', this.props.path, flatInfo)
 
-		let url = 'http://127.0.0.1:3001/render?path=' + flatInfo[0];
+		let url = `http://svgcloud.${this._domain}/render?path=${flatInfo[0]}`;
 		if (flatInfo.length > 1) {
 			url += "&flat=" + flatInfo[1];
 		}
-
-		console.log('finalUrl', url);
 
 		await fetch(url)
 			.then(response => response.text())
