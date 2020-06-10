@@ -226,7 +226,7 @@ export default class FileListControl extends Component {
 		const livingAreaSelector = element.dataset.livingSelector;
 		const kitchenAreaSelector = element.dataset.kitchenSelector;
 
-		console.log(commonAreaSelector, livingAreaSelector, kitchenAreaSelector);
+		this.props.onClose();
 
 		const fileContent = await fetch(`https://svgcloud.${this._domain}/render?path=${this.state.currentFile}&flat=${flatName}`)
 			.then(response => response.text())
@@ -261,13 +261,11 @@ export default class FileListControl extends Component {
 				})
 			});
 
-		this.props.onClose();
+
 	}
 
 	render() {
 		let content = null;
-
-		console.log(this.state.currentFile, this.state.isPreviewEnabled, this.props.isPreviewFileEnabled);
 
 		if (this.state.isLoading) {
 			content = <Loading />;
