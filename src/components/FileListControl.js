@@ -218,8 +218,49 @@ export default class FileListControl extends Component {
 		this.props.onClose();
 	}
 
-	onFlatClick(flatName) {
+	async onFlatClick(flatName) {
 		this.props.changeUrl(this.state.currentFile.replace(this.state.rootPath, '') + '#' + flatName);
+
+		const element = document.getElementById('svg-admin-list');
+		const commonAreaSelector = element.dataset.commonSelector;
+		const livingAreaSelector = element.dataset.livingSelector;
+		const kitchenAreaSelector = element.dataset.kitchenSelector;
+
+		console.log(commonAreaSelector, livingAreaSelector, kitchenAreaSelector);
+
+		const fileContent = await fetch(`https://svgcloud.${this._domain}/render?path=${this.state.currentFile}&flat=${flatName}`)
+			.then(response => response.text())
+			.then(result => {
+				const tempContainer = document.createElement('div');
+				tempContainer.innerHTML = result;
+
+				const flatGroup = tempContainer.querySelector('svg > g');
+
+				const commonAreaField = document.body.querySelector(commonAreaSelector);
+				const commonAreaValue = flatGroup.getAttribute('data-common');
+				if (commonAreaField && commonAreaValue) {
+					commonAreaField.value = commonAreaValue;
+				}
+
+				const livingAreaField = document.body.querySelector(livingAreaSelector);
+				const livingAreaValue = flatGroup.getAttribute('data-living').split(';').reduce((summ, current) => parseFloat(summ) + parseFloat(current));
+				if (livingAreaField && livingAreaValue) {
+					livingAreaField.value = livingAreaValue;
+				}
+
+				const kitchenAreaField = document.body.querySelector(kitchenAreaSelector);
+				const kitchenAreaValue = flatGroup.getAttribute('data-kitchen');
+				if (kitchenAreaField && kitchenAreaValue) {
+					kitchenAreaField.value = kitchenAreaValue;
+				}
+
+				this.setState({
+					isLoading: false,
+					flats: result,
+					currentFile: path.replace(this.state.rootPath, '')
+				})
+			});
+
 		this.props.onClose();
 	}
 
