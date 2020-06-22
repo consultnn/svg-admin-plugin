@@ -116,19 +116,17 @@ export default class FileListControl extends Component {
 
 	async componentDidMount() {
 		this._domain = document.getElementById('svg-admin-list').dataset.appDomain || 'ru';
-		const rootPath = await fetch(`https://svgcloud.${this._domain}/fs/root`).then(response => response.text());
 
 		this.setState({
-			currentPath: rootPath,
-			rootPath: rootPath
+			currentPath: ''
 		});
 
 		if (this.props.currentFile) {
 			const currentFile = this.props.currentFile;
-			this.onFileClick(rootPath + currentFile);
+			this.onFileClick(currentFile);
 		}
 
-		this._getList(rootPath);
+		this._getList('');
 	}
 
 	componentDidUpdate() {
@@ -174,12 +172,15 @@ export default class FileListControl extends Component {
 				this.setState({
 					isLoading: false,
 					flats: result,
-					currentFile: path.replace(this.state.rootPath, '')
+					currentFile: path
 				})
 			});
 	}
 
 	onBackClick() {
+		console.log(this.state.currentFile, this.state.currentFolder);
+		console.log('==============');
+
 		if (!this.state.currentFile) {
 			this._getList(this.state.currentFolder.parent);
 			return;
@@ -188,7 +189,7 @@ export default class FileListControl extends Component {
 		if (this.state.isPreviewEnabled) {
 			this.setState({
 				isPreviewEnabled: false
-			})
+			});
 
 			return;
 		}
@@ -214,12 +215,12 @@ export default class FileListControl extends Component {
 	}
 
 	onAllFloorClick() {
-		this.props.changeUrl(this.state.currentFile.replace(this.state.rootPath, ''));
+		this.props.changeUrl(this.state.currentFile);
 		this.props.onClose();
 	}
 
 	async onFlatClick(flatName) {
-		this.props.changeUrl(this.state.currentFile.replace(this.state.rootPath, '') + '#' + flatName);
+		this.props.changeUrl(this.state.currentFile + '#' + flatName);
 
 		const element = document.getElementById('svg-admin-list');
 		const commonAreaSelector = element.dataset.commonSelector;
@@ -257,11 +258,15 @@ export default class FileListControl extends Component {
 				this.setState({
 					isLoading: false,
 					flats: result,
-					currentFile: path.replace(this.state.rootPath, '')
+					currentFile: path
 				})
 			});
 
 
+	}
+
+	isRootPath() {
+		return this.state.currentFolder.path === '' || this.state.currentFolder.path === '.';
 	}
 
 	render() {
@@ -315,10 +320,10 @@ export default class FileListControl extends Component {
 
 		let title = 'Выберите файл';
 		let secondaryTitle = null;
-		if (this.state.currentFolder.path !== this.state.rootPath && this.state.currentFolder.path) {
+		if (!this.isRootPath() && this.state.currentFolder.path) {
 			title = this.state.currentFolder.title;
 
-			const pathWithoutRoot = this.state.currentFolder.path.replace(this.state.rootPath, '');
+			const pathWithoutRoot = this.state.currentFolder;
 			if (pathWithoutRoot.length) {
 				secondaryTitle = <SecondaryTitle>..{pathWithoutRoot.split('/').slice(0, -1).join('/')}/</SecondaryTitle>;
 			}
@@ -331,7 +336,7 @@ export default class FileListControl extends Component {
 
 		return <Container>
 			<Header>
-				<HeaderButton title="Вернуться назад" onClick={this.onBackClick} type="button" disabled={this.props.isPreviewFileEnabled || (this.state.currentFolder.path === this.state.rootPath && !this.state.currentFile)}><Icon i="back" top={4} /></HeaderButton>
+				<HeaderButton title="Вернуться назад" onClick={this.onBackClick} type="button" disabled={this.props.isPreviewFileEnabled || (this.isRootPath() && !this.state.currentFile)}><Icon i="back" top={4} /></HeaderButton>
 				<HeaderButton title="Обновить список" onClick={this.onRefreshClick} type="button" disabled={this.props.isPreviewFileEnabled || this.state.isPreviewEnabled}><Icon i="refresh" /></HeaderButton>
 				<HeaderTitle ref={this.titleRef}>{this.props.isPreviewFileEnabled ? "Предпросмотр файла" : [secondaryTitle, title]}</HeaderTitle>
 				<HeaderButton title="Закрыть" onClick={this.props.onClose} type="button"><Icon i="close" /></HeaderButton>
